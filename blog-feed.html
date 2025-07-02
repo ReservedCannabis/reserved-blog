@@ -1,88 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Reserved Cannabis Blog</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: 'Helvetica Neue', sans-serif;
-      background-color: #0e0c0a;
-      color: #f3e5c4;
-      margin: 0;
-      padding: 40px 20px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    h1 {
-      font-size: 2.5em;
-      border-bottom: 2px solid #c8a96a;
-      padding-bottom: 10px;
-      margin-bottom: 30px;
-    }
-    .post {
-      margin-bottom: 50px;
-      border-bottom: 1px solid #3a3128;
-      padding-bottom: 30px;
-    }
-    .post-title {
-      font-size: 1.8em;
-      font-weight: bold;
-      color: #f3e5c4;
-      margin-bottom: 5px;
-    }
-    .post-date {
-      color: #9e8c6d;
-      font-size: 0.9em;
-      margin-bottom: 15px;
-    }
-    .post-description {
-      font-size: 1.1em;
-      line-height: 1.6em;
-    }
-    a {
-      color: #f3e5c4;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
+    body { background: #111; color: #fff3e0; font-family: Arial, sans-serif; margin: 40px; }
+    h1 { border-bottom: 2px solid #ffc107; padding-bottom: 10px; }
+    .post { margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #444; }
+    .post a { color: #ffd54f; font-size: 1.4em; text-decoration: none; }
+    .post a:hover { text-decoration: underline; }
+    .summary { margin-top: 10px; font-size: 1em; line-height: 1.5em; color: #ddd; }
+    .date { font-size: 0.9em; color: #aaa; margin-bottom: 8px; }
   </style>
 </head>
 <body>
-  <h1>Latest Blog Posts</h1>
-  <div id="feed-container"></div>
-
-  <script>
-    async function loadFeed() {
-      const response = await fetch('https://reservedcannabis.github.io/reserved-blog/rss.xml');
-      const text = await response.text();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(text, 'text/xml');
-      const items = xml.querySelectorAll('item');
-      const container = document.getElementById('feed-container');
-
-      items.forEach(item => {
-        const title = item.querySelector('title').textContent;
-        const link = item.querySelector('link').textContent;
-        const pubDate = item.querySelector('pubDate').textContent;
-        const description = item.querySelector('description').textContent;
-
-        const postDiv = document.createElement('div');
-        postDiv.className = 'post';
-
-        postDiv.innerHTML = `
-          <a href="${link}" target="_blank" class="post-title">${title}</a>
-          <div class="post-date">${pubDate}</div>
-          <div class="post-description">${description}</div>
-        `;
-        container.appendChild(postDiv);
-      });
-    }
-
-    loadFeed();
-  </script>
+  <h1>Educational Cannabis Articles</h1>
+  <!-- Blog posts are inserted here by automation -->
 </body>
 </html>
