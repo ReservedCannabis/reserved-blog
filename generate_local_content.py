@@ -1,36 +1,33 @@
-
+import os
 import openai
-import datetime
-from google_sheets_logger import log_to_sheet
 from config import OPENAI_API_KEY
+from datetime import datetime
 
-from openai import OpenAI
-client = OpenAI(api_key=OPENAI_API_KEY)
+openai.api_key = OPENAI_API_KEY
 
-blog_topics = [
-    "Same-Day Weed Delivery in Etobicoke – What You Need to Know",
-    "Waterloo’s Top Cannabis Products for First-Time Buyers",
-    "How to Choose the Right THC vs CBD Ratio for You"
+topics = [
+    "Best strains for relaxation in Ontario",
+    "Understanding hybrid cannabis effects",
+    "Cannabis and sleep – what studies say",
+    "Cannabis laws in Ontario 2025 update",
+    "Tips for first-time cannabis users",
 ]
 
-def generate_blog_post(topic):
-    prompt = f"Write a 500-word SEO-optimized blog post titled '{topic}' for a legal cannabis retail site in Ontario. Make it informative, include keywords naturally, and format using basic HTML tags."
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=1000
-    )
-    return response.choices[0].message.content
+def sanitize_filename(name):
+    return name.lower().replace(" ", "_").replace("-", "_").replace("–", "_").replace("'", "").replace(",", "") + ".html"
 
-def save_post(topic, content):
-    filename = "posts/" + topic.lower().replace(" ", "_").replace("–", "-").replace(",", "").replace("'", "") + ".html"
-    with open(filename, "w") as f:
-        f.write(content)
-
-if __name__ == "__main__":
-    import os
-    os.makedirs("posts", exist_ok=True)
-    for topic in blog_topics:
-        content = generate_blog_post(topic)
-        save_post(topic, content)
-        log_to_sheet("generate_local_content", topic, "Post Created", datetime.datetime.now().isoformat())
+for topic in topics:
+    try:
+        prompt = f"Write a 500-word SEO-optimized blog article on the topic: '{topic}'. Include a strong headline but no title tags. Format using <p> and <h2> tags only. Avoid H1."
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1000
+        )
+        content = response.choices[0].message.content.strip()
+        filename = sanitize_filename(topic)
+        with open(f"posts/{filename}", "w") as f:
+            f.write(content)
+        print(f"✅ Saved: {filename}")
+    except Exception as e:
+        print(f"❌ Error with topic '{topic}':", e)

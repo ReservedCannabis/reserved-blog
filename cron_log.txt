@@ -1,0 +1,20 @@
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/crawl_audit.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/optimize_meta_tags.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/track_keywords.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/generate_local_content.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/rss_generator.py': [Errno 2] No such file or directory
+bash: push_to_blog.sh: No such file or directory
+📦 Generating new blog posts...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/generate_local_content.py': [Errno 2] No such file or directory
+🖼 Adding featured images...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/image_fetcher.py': [Errno 2] No such file or directory
+🛒 Inserting Amazon affiliate products...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/affiliate_inserter.py': [Errno 2] No such file or directory
+📰 Generating RSS and blog-feed...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/rss_generator.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/blog_feed_generator.py': [Errno 2] No such file or directory
+🚀 Committing and pushing to GitHub Pages...
+bash: push_to_blog.sh: No such file or directory
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git

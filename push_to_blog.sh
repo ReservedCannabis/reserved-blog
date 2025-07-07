@@ -1,19 +1,10 @@
 #!/bin/bash
 
-# Change to the SEOAgent folder
-cd "$(dirname "$0")"
+echo "📦 Generating updated RSS feed and blog HTML..."
+python3 rss_generator.py
 
-# Initialize Git only if it hasn't been already
-if [ ! -d ".git" ]; then
-  git init
-  git remote add origin https://github.com/smarthomepulse/reserved-blog.git
-  touch .nojekyll
-  git add .
-  git commit -m "Initial commit"
-  git branch -M main
-  git push -u origin main
-else
-  git add rss.xml posts/
-  git commit -m "Update RSS feed and posts"
-  git push
-fi
+echo "🚀 Committing and pushing to ReservedCannabis GitHub Pages repo..."
+git add blog-feed.html rss.xml
+git commit -m "Update RSS feed and blog content"
+git push
+echo "✅ Push complete: https://reservedcannabis.github.io/reserved-blog/blog-feed.html"
