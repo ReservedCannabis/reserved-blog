@@ -1,78 +1,69 @@
-#!/usr/bin/env python3
-import os, re, json
+import os
 from datetime import datetime
-from pathlib import Path
 
-POST_DIR   = Path("posts")
-LIST_FILE  = "blog-feed.html"
-DATE_STORE = ".article_dates.json"
+# Directory where your post HTML files live
+POSTS_DIR = "posts"
+# Output file for your blog feed listing
+OUTPUT_FILE = "blog-feed.html"
 
-# load or init
-if Path(DATE_STORE).exists():
-    article_dates = json.loads(Path(DATE_STORE).read_text())
-else:
-    article_dates = {}
+# Helper to format timestamps
+def fmt(ts):
+    return datetime.fromtimestamp(ts).strftime("%b %d, %Y")
 
-entries = []
-for html_path in sorted(POST_DIR.glob("*.html")):
-    content = html_path.read_text()
-    slug    = html_path.stem
+# Extract title from a post HTML file by reading its <title> tag
+# Assumes well-formed HTML with <title>Your Title</title>
+def extract_title(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if '<title>' in line:
+                start = line.find('<title>') + 7
+                end = line.find('</title>')
+                return line[start:end].strip()
+    # fallback to filename if no title tag
+    return os.path.splitext(os.path.basename(path))[0].replace('_', ' ').title()
 
-    # get published date from comment
-    m = re.search(r"<!--\s*published:([\d\-]+)\s*-->", content)
-    date = m.group(1) if m else datetime.utcnow().strftime("%Y-%m-%d")
+# Main generation function
+def main():
+    # Collect all .html files in posts/
+    post_files = [f for f in os.listdir(POSTS_DIR) if f.endswith('.html')]
+    # Sort by modification time descending
+    post_paths = sorted(
+        [os.path.join(POSTS_DIR, f) for f in post_files],
+        key=lambda p: os.path.getmtime(p),
+        reverse=True
+    )
 
-    # preserve old date if exists
-    if slug in article_dates:
-        date = article_dates[slug]
-    else:
-        article_dates[slug] = date
+    # Start the HTML
+    html = [
+        '<!doctype html>',
+        '<html lang="en">',
+        '<head>\n  <meta charset="utf-8">',
+        '  <title>Latest Articles</title>\n</head>',
+        '<body>',
+        '  <h1>Latest Articles</h1>',
+        '  <ul>'
+    ]
 
-    # title
-    m2 = re.search(r"<h1>(.*?)</h1>", content, re.S)
-    title = m2.group(1).strip() if m2 else slug.replace("_"," ").title()
+    # Build list items, prefixing each link with posts/
+    for path in post_paths:
+        fname = os.path.basename(path)
+        title = extract_title(path)
+        mts = os.path.getmtime(path)
+        date = fmt(mts)
+        href = f"{POSTS_DIR}/{fname}"
+        html.append(f"    <li><a href=\"{href}\">{title}</a> ({date})</li>")
 
-    # summary
-    m3 = re.search(r"<p>(.*?)</p>", content, re.S)
-    summary = m3.group(1).strip() if m3 else ""
+    # Close HTML
+    html += [
+        '  </ul>',
+        '</body>',
+        '</html>'
+    ]
 
-    # first image
-    m4 = re.search(r'<img[^>]+src="([^"]+)"', content)
-    img = m4.group(1) if m4 else ""
+    # Write out
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        f.write("\n".join(html))
+    print(f"✅ {OUTPUT_FILE} written with {len(post_paths)} posts.")
 
-    entries.append({
-        "slug": slug,
-        "title": title,
-        "date": date,
-        "summary": summary,
-        "img": img
-    })
-
-# save back the date map
-Path(DATE_STORE).write_text(json.dumps(article_dates, indent=2))
-
-# build listing HTML
-out = ["<!DOCTYPE html>",
-       "<html lang='en'><head><meta charset='UTF-8'>",
-       "<title>Reserved Cannabis Blog</title>",
-       "<style>body{background:#111;color:#fff;font-family:Arial,sans-serif;padding:40px;}"+
-       ".post{margin-bottom:40px;}a{color:#ffc107;text-decoration:none;}a:hover{text-decoration:underline;}"+
-       "img{max-width:100%;display:block;margin-bottom:10px;}"+
-       "h2{margin:0;}small{color:#aaa;}"+
-       "</style></head><body>",
-       "<h1>Educational Cannabis Articles</h1>"
-]
-
-# newest first
-for e in sorted(entries, key=lambda x: x["date"], reverse=True):
-    out.append("<div class='post'>")
-    if e["img"]:
-        out.append(f"<a href='{e['slug']}.html'><img src='{e['img']}' alt=''></a>")
-    out.append(f"<h2><a href='{e['slug']}.html'>{e['title']}</a></h2>")
-    out.append(f"<small>{e['date']}</small>")
-    out.append(f"<p>{e['summary']}</p>")
-    out.append("</div>")
-
-out.append("</body></html>")
-Path(LIST_FILE).write_text("\n".join(out))
-print("✅", LIST_FILE, "written with", len(entries), "posts.")
+if __name__ == '__main__':
+    main()
