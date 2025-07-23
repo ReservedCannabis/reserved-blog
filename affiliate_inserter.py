@@ -1,41 +1,76 @@
+#!/usr/bin/env python3
+import os, random
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-import os
-import random
 
-AFFILIATE_TAG = "smarthomepu07-20"  # Replace with your real tag
+# ── CONFIG ───────────────────────────────────────────────────────────────
+SHEET_ID = "10RTloEY5nvjOBm7CaPhYMplxbY31Gf8CMVFkXVAW2to"
+TAB     = "AffiliateProducts"
+# ──────────────────────────────────────────────────────────────────────────
 
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+# 1) auth
+scope = ["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("google-credentials.json", scope)
-client = gspread.authorize(creds)
+gc = gspread.authorize(creds)
+ws = gc.open_by_key(SHEET_ID).worksheet(TAB)
 
-sheet = client.open_by_key("10RTloEY5nvjOBm7CaPhYMplxbY31Gf8CMVFkXVAW2to").worksheet("AffiliateProducts")
-data = sheet.get_all_records()
-products = [p for p in data if p["asin"] and p["product_name"]]
+# 2) grab the full sheet as rows
+all_vals = ws.get_all_values()
+if not all_vals or len(all_vals) < 2:
+    print("⚠️ Sheet is empty or missing data.")
+    exit(1)
 
-html_files = sorted(f for f in os.listdir("posts") if f.endswith(".html"))
-random.shuffle(products)
+header = all_vals[0]
+rows   = all_vals[1:]
 
-for idx, file in enumerate(html_files):
-    if idx >= len(products): break
-    filepath = os.path.join("posts", file)
-    asin = products[idx]["asin"].strip()
-    name = products[idx]["product_name"].strip()
-    aff_link = f"https://www.amazon.ca/dp/{asin}/?tag={AFFILIATE_TAG}"
-    caption = f'<p style="margin-top:20px;"><strong>Featured Product:</strong> <a href="{aff_link}" target="_blank" style="color:#ffd54f;">{name}</a> – A top-rated cannabis accessory on Amazon Canada.</p>'
+# 3) locate our three columns
+try:
+    idx_name = header.index("product_name")
+    idx_asin = header.index("asin")
+    idx_link = header.index("link")
+except ValueError as e:
+    print("❌ Cannot find column:", e)
+    print("   Header row is:", header)
+    exit(1)
 
-    with open(filepath, "r") as f:
-        content = f.read()
+# 4) build product list
+prods = []
+for r in rows:
+    name = r[idx_name].strip()
+    asin = r[idx_asin].strip()
+    link = r[idx_link].strip()
+    if name and asin and link:
+        prods.append((name, link))
 
-    # Ensure readable white text and append affiliate link
-    if "<style>" not in content:
-        content = content.replace("<body>", """<body>
-<style>body{color:#fff;font-size:1.2em;line-height:1.6;}</style>""")
-    content += caption
+if not prods:
+    print("⚠️ No fully-populated rows (name+asin+link).")
+    exit(0)
 
-    with open(filepath, "w") as f:
-        f.write(content)
+# 5) inject into posts
+post_files = sorted(f for f in os.listdir("posts") if f.endswith(".html"))
+random.shuffle(prods)
 
-    print(f"✅ Injected affiliate product: {name} → {file}")
+injected = 0
+for post, (name, link) in zip(post_files, prods):
+    path = os.path.join("posts", post)
+    html = open(path).read()
 
-print(f"\n✅ Done! {min(len(html_files), len(products))} inserted, {max(0, len(html_files) - len(products))} skipped.")
+    if link in html:
+        continue
+
+    snippet = (
+        f'<p style="margin-top:20px;">'
+        f'<strong>Featured Product:</strong> '
+        f'<a href="{link}" target="_blank" rel="noopener noreferrer">{name}</a>'
+        f' – A top-rated cannabis accessory on Amazon Canada.'
+        f'</p>'
+    )
+    new_html = html.replace("</body>", snippet + "\n</body>")
+
+    with open(path, "w") as f:
+        f.write(new_html)
+
+    print(f"✅ Injected {name} → {post}")
+    injected += 1
+
+print(f"\n✅ Done! {injected} inserted, {len(post_files)-injected} skipped.")

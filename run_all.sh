@@ -1,25 +1,45 @@
 #!/bin/bash
 
-echo "📦 Generating new blog posts..."
+echo "📦 Generating new blog posts…"
 python3 generate_local_content.py
 
-echo "🖼 Adding featured images..."
+echo "🖼 Adding featured images…"
 python3 image_fetcher.py
 
-echo "🛒 Inserting Amazon affiliate products..."
+echo "🔗 Populating affiliate links in sheet…"
+python3 populate_affiliate_links.py
+
+echo "🛒 Inserting Amazon affiliate products…"
 python3 affiliate_inserter.py
 
-echo "📰 Generating RSS and blog-feed..."
+echo "🔧 Wrapping posts in full HTML + forcing white text…"
+python3 wrap_posts.py
+
+echo "📰 Generating RSS and blog-feed…"
 python3 rss_generator.py
 python3 blog_feed_generator.py
 
-# Optional: Reddit auto-posting (disabled for now)
-# echo "🔗 Posting to Reddit..."
-# python3 reddit_poster.py
-
-echo "🚀 Committing and pushing to GitHub Pages..."
+echo "🚀 Committing and pushing to GitHub Pages…"
 bash push_to_blog.sh
 
-git add blog-feed.html rss.xml posts/*.html
-git commit -m "Update blog feed and articles"
+echo "🔗 Fetching new affiliate products…"
+python3 fetch_reserved_affiliate_products.py
+
+# now regenerate index.html redirect
+cat > index.html <<EOF
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting…</title>
+    <meta http-equiv="refresh" content="0;url=blog-feed.html">
+  </head>
+  <body>
+    <p>Redirecting to <a href="blog-feed.html">blog feed</a>…</p>
+  </body>
+</html>
+EOF
+
+git add index.html
+git commit -m "Update index.html redirect"
 git push

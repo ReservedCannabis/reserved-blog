@@ -18,3 +18,73 @@ bash: push_to_blog.sh: No such file or directory
 fatal: not a git repository (or any of the parent directories): .git
 fatal: not a git repository (or any of the parent directories): .git
 fatal: not a git repository (or any of the parent directories): .git
+📦 Generating new blog posts...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/generate_local_content.py': [Errno 2] No such file or directory
+🖼 Adding featured images...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/image_fetcher.py': [Errno 2] No such file or directory
+🛒 Inserting Amazon affiliate products...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/affiliate_inserter.py': [Errno 2] No such file or directory
+📰 Generating RSS and blog-feed...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/rss_generator.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/blog_feed_generator.py': [Errno 2] No such file or directory
+🚀 Committing and pushing to GitHub Pages...
+bash: push_to_blog.sh: No such file or directory
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+📦 Generating new blog posts...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/generate_local_content.py': [Errno 2] No such file or directory
+🖼 Adding featured images...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/image_fetcher.py': [Errno 2] No such file or directory
+🛒 Inserting Amazon affiliate products...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/affiliate_inserter.py': [Errno 2] No such file or directory
+📰 Generating RSS and blog-feed...
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/rss_generator.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/blog_feed_generator.py': [Errno 2] No such file or directory
+🚀 Committing and pushing to GitHub Pages...
+bash: push_to_blog.sh: No such file or directory
+🔗 Fetching new affiliate products…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/fetch_reserved_affiliate_products.py': [Errno 2] No such file or directory
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+📦 Generating new blog posts…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/generate_local_content.py': [Errno 2] No such file or directory
+🖼 Adding featured images…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/image_fetcher.py': [Errno 2] No such file or directory
+🔗 Populating affiliate links in sheet…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/populate_affiliate_links.py': [Errno 2] No such file or directory
+🛒 Inserting Amazon affiliate products…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/affiliate_inserter.py': [Errno 2] No such file or directory
+🔧 Wrapping posts in full HTML + forcing white text…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/wrap_posts.py': [Errno 2] No such file or directory
+📰 Generating RSS and blog-feed…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/rss_generator.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/blog_feed_generator.py': [Errno 2] No such file or directory
+🚀 Committing and pushing to GitHub Pages…
+bash: push_to_blog.sh: No such file or directory
+🔗 Fetching new affiliate products…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/fetch_reserved_affiliate_products.py': [Errno 2] No such file or directory
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+📦 Generating new blog posts…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/generate_local_content.py': [Errno 2] No such file or directory
+🖼 Adding featured images…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/image_fetcher.py': [Errno 2] No such file or directory
+🔗 Populating affiliate links in sheet…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/populate_affiliate_links.py': [Errno 2] No such file or directory
+🛒 Inserting Amazon affiliate products…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/affiliate_inserter.py': [Errno 2] No such file or directory
+🔧 Wrapping posts in full HTML + forcing white text…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/wrap_posts.py': [Errno 2] No such file or directory
+📰 Generating RSS and blog-feed…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/rss_generator.py': [Errno 2] No such file or directory
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/blog_feed_generator.py': [Errno 2] No such file or directory
+🚀 Committing and pushing to GitHub Pages…
+bash: push_to_blog.sh: No such file or directory
+🔗 Fetching new affiliate products…
+/Library/Developer/CommandLineTools/usr/bin/python3: can't open file '/Users/mymac/fetch_reserved_affiliate_products.py': [Errno 2] No such file or directory
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
