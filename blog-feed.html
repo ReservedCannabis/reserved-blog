@@ -4,121 +4,115 @@
   <meta charset="utf-8">
   <title>Cannabis Blog – Reserved Cannabis</title>
   <style>
-    body { max-width: 720px; margin: 2em auto; font-family: system-ui; background: #d0b08b; }
-    h1 { font-size: 2rem; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 1em 0; padding: 1em; background: white; border-radius: .5em; }
-    a { text-decoration: none; color: #333; font-weight: bold; font-size: 1.2rem; }
-    .date { display: block; color: gray; margin-top: .25em; font-size: .9rem; }
+    body { background:#d0b08b; font-family:system-ui,sans-serif; margin:2rem; }
+    h1 { font-size:2.5rem; margin-bottom:1rem; }
+    .rss-grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap:1.5rem;
+    }
+    .rss-card {
+      background:#fff;
+      border-radius:12px;
+      overflow:hidden;
+      text-decoration:none;
+      color:#111;
+      box-shadow:0 4px 12px rgba(0,0,0,0.1);
+      display:flex;
+      flex-direction:column;
+    }
+    .rss-card img {
+      width:100%; height:160px; object-fit:cover;
+    }
+    .rss-card-content { padding:1rem; flex:1; }
+    .rss-card-content h2 { margin:0 0 .5rem; font-size:1.25rem; }
+    .rss-card-content time { color:#666; font-size:.9rem; }
   </style>
 </head>
 <body>
   <h1>Latest Articles</h1>
-  <ul>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/a-beginner-s-guide-to-understanding-cannabis-concentrates.html">A Beginner's Guide to Understanding Cannabis Concentrates</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/the-ultimate-guide-to-cannabis-humidity-control.html">The Ultimate Guide to Cannabis Humidity Control</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/navigating-ontario-s-cannabis-regulations-a-2025-perspective.html">Navigating Ontario's Cannabis Regulations: A 2025 Perspective</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/understanding-hybrid-cannabis-effects.html">Understanding hybrid cannabis effects</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/the-science-behind-cannabis-terpenes-and-their-effects.html">The Science Behind Cannabis Terpenes and Their Effects</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/pre-roll-accessories-every-beginner-needs.html">Pre-roll accessories every beginner needs</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/how-to-create-the-perfect-cannabis-edible-at-home.html">How to Create the Perfect Cannabis Edible at Home</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/exploring-the-best-relaxation-strains-available-in-ontario.html">Exploring the Best Relaxation Strains Available in Ontario</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/storing_cannabis_safely_at_home.html">Storing Cannabis Safely at Home</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/essential-tips-for-new-cannabis-enthusiasts.html">Essential Tips for New Cannabis Enthusiasts</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/the-future-of-cannabis-cultivation-trends-to-watch-in-ontario.html">The Future of Cannabis Cultivation: Trends to Watch in Ontario</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/cannabis_and_sleep_what_the_studies_say.html">Cannabis and sleep – what the studies say</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/how-to-choose-the-right-thc-vs-cbd-ratio.html">How to choose the right THC vs CBD ratio</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/tips-for-first-time-cannabis-users.html">Tips for first-time cannabis users</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/top_cannabis_grinders_compared.html">Top cannabis grinders compared</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/understanding_hybrid_cannabis_effects.html">Understanding Hybrid Cannabis Effects</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/best_strains_for_relaxation_in_ontario.html">Best Strains for Relaxation in Ontario</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/exploring-the-benefits-of-cannabis-for-anxiety-relief.html">Exploring the Benefits of Cannabis for Anxiety Relief</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/maintaining_optimal_cannabis_humidity.html">Maintaining Optimal Cannabis Humidity</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/tips_for_first-time_cannabis_users.html">Tips for First-Time Cannabis Users</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/cannabis-and-sleep-what-studies-say.html">Cannabis and sleep – what studies say</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/best-strains-for-relaxation-in-ontario.html">Best strains for relaxation in Ontario</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/how_to_choose_the_right_thc_vs_cbd_ratio.html">How to choose the right THC vs CBD ratio</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/pre-roll_accessories_every_beginner_needs.html">Pre-roll accessories every beginner needs</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/cannabis_laws_in_ontario_2025_update.html">Cannabis laws in Ontario: 2025 update</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-    <li>
-      <a href="https://blog.reservedcannabis.ca/posts/safe-storage-solutions-for-your-cannabis-collection.html">Safe Storage Solutions for Your Cannabis Collection</a>
-      <span class="date">Aug 1, 2025</span>
-    </li>
-  </ul>
+  <div class="rss-grid">
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/a-beginner-s-guide-to-understanding-cannabis-concentrates.html">
+      <img src="https://images.pexels.com/photos/2731664/pexels-photo-2731664.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="A Beginner S Guide To Understanding Cannabis Concentrates">
+      <div class="rss-card-content">
+        <h2>A Beginner S Guide To Understanding Cannabis Concentrates</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/the-ultimate-guide-to-cannabis-humidity-control.html">
+      <img src="https://images.pexels.com/photos/2753946/pexels-photo-2753946.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="The Ultimate Guide To Cannabis Humidity Control">
+      <div class="rss-card-content">
+        <h2>The Ultimate Guide To Cannabis Humidity Control</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/cannabis-laws-in-ontario-2025-update.html">
+      <img src="https://images.pexels.com/photos/7667883/pexels-photo-7667883.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Cannabis Laws In Ontario 2025 Update">
+      <div class="rss-card-content">
+        <h2>Cannabis Laws In Ontario 2025 Update</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/navigating-ontario-s-cannabis-regulations-a-2025-perspective.html">
+      <img src="https://images.pexels.com/photos/3676962/pexels-photo-3676962.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Navigating Ontario S Cannabis Regulations A 2025 Perspective">
+      <div class="rss-card-content">
+        <h2>Navigating Ontario S Cannabis Regulations A 2025 Perspective</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/understanding-hybrid-cannabis-effects.html">
+      <img src="https://images.pexels.com/photos/3807374/pexels-photo-3807374.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Understanding Hybrid Cannabis Effects">
+      <div class="rss-card-content">
+        <h2>Understanding Hybrid Cannabis Effects</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/the-science-behind-cannabis-terpenes-and-their-effects.html">
+      <img src="https://images.pexels.com/photos/7667902/pexels-photo-7667902.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="The Science Behind Cannabis Terpenes And Their Effects">
+      <div class="rss-card-content">
+        <h2>The Science Behind Cannabis Terpenes And Their Effects</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/pre-roll-accessories-every-beginner-needs.html">
+      <img src="https://images.pexels.com/photos/7667932/pexels-photo-7667932.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Pre Roll Accessories Every Beginner Needs">
+      <div class="rss-card-content">
+        <h2>Pre Roll Accessories Every Beginner Needs</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/how-to-create-the-perfect-cannabis-edible-at-home.html">
+      <img src="https://images.pexels.com/photos/395087/pexels-photo-395087.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="How To Create The Perfect Cannabis Edible At Home">
+      <div class="rss-card-content">
+        <h2>How To Create The Perfect Cannabis Edible At Home</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/exploring-the-best-relaxation-strains-available-in-ontario.html">
+      <img src="https://images.pexels.com/photos/1466335/pexels-photo-1466335.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Exploring The Best Relaxation Strains Available In Ontario">
+      <div class="rss-card-content">
+        <h2>Exploring The Best Relaxation Strains Available In Ontario</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+    <a class="rss-card" href="https://blog.reservedcannabis.ca/posts/storing_cannabis_safely_at_home.html">
+      <img src="https://images.pexels.com/photos/7667900/pexels-photo-7667900.jpeg?auto=compress&cs=tinysrgb&h=650&w=940" alt="Storing Cannabis Safely At Home">
+      <div class="rss-card-content">
+        <h2>Storing Cannabis Safely At Home</h2>
+        <time>Aug 1, 2025</time>
+      </div>
+    </a>
+    
+  </div>
 </body>
 </html>
