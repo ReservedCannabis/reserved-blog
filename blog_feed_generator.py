@@ -1,120 +1,102 @@
-import os, glob, datetime
-from bs4 import BeautifulSoup
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-# Prefer wrapped posts for consistent styling; fall back to raw posts if needed
-SEARCH_DIRS = ["posts_wrapped", "posts"]
-FEED_FILE   = "blog-feed.html"
-MAX_CARDS   = 120  # show more so new items surface
+from pathlib import Path
+import re, datetime
 
-STYLE = """
-<style>
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;margin:0;padding:0;background:#efe9e4}
-  h1{padding:2rem;margin:0;font-size:2rem}
-  .container{padding:2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem}
-  .card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.08);display:flex;flex-direction:column;transition:transform .18s ease}
-  .card:hover{transform:translateY(-4px)}
-  .card img{width:100%;height:180px;object-fit:cover}
-  .card-content{padding:1rem}
-  .card-content h2{font-size:1.05rem;margin:0 0 .35rem}
-  .card-content p{color:#666;font-size:.85rem;margin:0}
-  a{text-decoration:none;color:inherit}
-</style>
-"""
+POST_DIRS = [Path("posts_wrapped"), Path("posts")]
+OUT_HTML  = Path("blog-feed.html")
 
-def parse_date_from_soup(soup):
-    # Prefer <time datetime="YYYY-MM-DD">, then text of <time>, then None
-    t = soup.find("time")
-    if t:
-        if t.has_attr("datetime"):
-            try:
-                return datetime.datetime.strptime(t["datetime"][:10], "%Y-%m-%d")
-            except Exception:
-                pass
-        if t.text and t.text.strip():
-            for fmt in ("%Y-%m-%d", "%b %d, %Y", "%Y/%m/%d"):
-                try:
-                    return datetime.datetime.strptime(t.text.strip()[:12], fmt)
-                except Exception:
-                    continue
-    return None
+def utcts(ts: float) -> str:
+    # Human date for card
+    return datetime.datetime.fromtimestamp(ts, datetime.UTC).strftime("%b %d, %Y")
 
-def post_iter():
+def extract_title(html: str, fallback: str) -> str:
+    m = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.I | re.S)
+    if m:
+        return re.sub(r"\s+", " ", m.group(1)).strip()
+    m = re.search(r"<title[^>]*>(.*?)</title>", html, re.I | re.S)
+    if m:
+        return re.sub(r"\s+", " ", m.group(1)).strip()
+    return fallback
+
+def extract_og_image(html: str) -> str | None:
+    m = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', html, re.I)
+    return m.group(1) if m else None
+
+def extract_first_img(html: str) -> str | None:
+    m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', html, re.I)
+    return m.group(1) if m else None
+
+PLACEHOLDER = "https://dummyimage.com/1200x630/202020/ffffff.png&text=Reserved+Cannabis"
+
+def first_image_url(html: str) -> str:
+    return extract_og_image(html) or extract_first_img(html) or PLACEHOLDER
+
+def collect_posts():
+    items = []
     seen = set()
-    for d in SEARCH_DIRS:
-        if not os.path.isdir(d): 
+    for root in POST_DIRS:
+        if not root.exists():
             continue
-        for fp in glob.glob(os.path.join(d, "*.html")):
-            slug = os.path.basename(fp)
-            if slug in seen:
+        for fp in root.glob("*.html"):
+            slug = fp.name
+            if slug in seen:  # prefer wrapped versions
                 continue
+            html = fp.read_text(encoding="utf-8", errors="ignore")
+            title = extract_title(html, fp.stem.replace("-", " ").title())
+            img = first_image_url(html)
+            ts  = fp.stat().st_mtime
+            items.append((ts, fp, title, img))
             seen.add(slug)
-            yield d, fp, slug
+    # newest first
+    items.sort(key=lambda x: x[0], reverse=True)
+    return items
 
+CARD = """<a class="card" href="{href}">
+  <img alt="{title}" src="{img}">
+  <div class="meta">
+    <h3>{title}</h3>
+    <p class="date">{date}</p>
+  </div>
+</a>"""
 
-def _first_valid_image(soup):
-    # Prefer og:image first
-    og = soup.find("meta", attrs={"property":"og:image"}) or soup.find("meta", attrs={"name":"og:image"})
-    if og and og.get("content") and og["content"].strip().startswith(("http://","https://")):
-        return og["content"].strip()
-
-    # Then scan img tags, allow common lazy attrs
-    for img in soup.find_all("img"):
-        cand = (
-            img.get("src")
-            or img.get("data-src")
-            or img.get("data-original")
-            or img.get("data-lazy")
-        )
-        if not cand:
-            continue
-        cand = cand.strip()
-        # Ignore obvious local/relative paths
-        if cand.startswith(("http://","https://")):
-            return cand
-    return ""
-def card_info(dir_name, path, slug):
-    with open(path, "r", encoding="utf-8") as f:
-        soup = BeautifulSoup(f.read(), "html.parser")
-    title = (soup.title.text.strip() if soup.title and soup.title.text.strip() else slug.replace("-", " ").title())
-    dt = parse_date_from_soup(soup)
-    # Fallback: if no <time>, use the *source* post mtime rather than wrapped mtime
-    if dt is None:
-        source_path = path
-        if dir_name == "posts_wrapped":
-            raw = os.path.join("posts", slug)
-            if os.path.exists(raw):
-                source_path = raw
-        ts = os.path.getmtime(source_path)
-        dt = datetime.datetime.utcfromtimestamp(ts)
-    # Card image: first <img> src if present
-    img = _first_valid_image(soup)
-    href = f"posts_wrapped/{slug}" if os.path.exists(os.path.join("posts_wrapped", slug)) else f"posts/{slug}"
-    return {"title": title, "date": dt, "img": img, "href": href, "slug": slug}
-
-def generate():
-    posts = [card_info(d, p, s) for d, p, s in post_iter()]
-    # Sort newest first, then by slug for stability
-    posts.sort(key=lambda x: (x["date"], x["slug"]), reverse=True)
-    cards = []
-    for post in posts[:MAX_CARDS]:
-        img_html = f'<img src="{post["img"]}" alt="{post["title"]}">' if post["img"] else ""
-        cards.append(f"""
-        <a href="{post['href']}" target="_blank" rel="noopener">
-          <div class="card">
-            {img_html}
-            <div class="card-content">
-              <h2>{post['title']}</h2>
-              <p>{post['date'].strftime('%b %d, %Y')}</p>
-            </div>
-          </div>
-        </a>""")
-    html = f"""<!doctype html><meta charset="utf-8"><title>Reserved Cannabis — Blog</title>
-    {STYLE}
+SHELL = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Reserved Cannabis — Latest Articles</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body{{margin:0;background:#caa986;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}}
+  main{{max-width:1200px;margin:40px auto;padding:0 16px}}
+  h1{{font-size:40px;margin:0 0 20px}}
+  .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}}
+  .card{{display:block;border-radius:16px;overflow:hidden;background:#fff;text-decoration:none;color:#111;box-shadow:0 6px 20px rgba(0,0,0,.1)}}
+  .card img{{width:100%;height:180px;object-fit:cover;display:block;background:#e9e9e9}}
+  .meta{{padding:14px}}
+  .meta h3{{margin:0 0 8px;font-size:20px;line-height:1.25}}
+  .meta .date{{margin:0;color:#666;font-size:14px}}
+</style>
+</head>
+<body>
+  <main>
     <h1>Reserved Cannabis — Latest Articles</h1>
-    <div class="container">{''.join(cards)}</div>"""
-    with open(FEED_FILE, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"✅ Blog feed generated: {FEED_FILE} with {min(len(posts), MAX_CARDS)} post(s)")
+    <div class="grid">
+      {cards}
+    </div>
+  </main>
+</body>
+</html>"""
+
+def main():
+    posts = collect_posts()
+    cards = []
+    for ts, fp, title, img in posts:
+        href = f"posts_wrapped/{fp.name}"
+        cards.append(CARD.format(href=href, img=img, title=title, date=utcts(ts)))
+    OUT_HTML.write_text(SHELL.format(cards="\n".join(cards)), encoding="utf-8")
+    print(f"✅ Blog feed generated: {OUT_HTML} with {len(posts)} post(s)")
 
 if __name__ == "__main__":
-    generate()
+    main()

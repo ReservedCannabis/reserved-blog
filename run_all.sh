@@ -1,44 +1,42 @@
 #!/bin/bash
-echo "📦 Generating new blog posts…"
+set -euo pipefail
+
+# Locked service areas (generator enforces this too)
+export STORE_LOCATIONS="Etobicoke,Guelph"
+
+echo "📦 Generating any new blog posts…"
 python3 generate_local_content.py
 
 echo "🖼 Adding featured images…"
-python3 image_fetcher.py
+python3 image_fetcher.py || true
 
-echo "🔗 Populating affiliate links in sheet…"
-python3 populate_affiliate_links.py
-
-echo "🛒 Inserting Amazon affiliate products…"
-python3 affiliate_inserter.py
-
-echo "🔧 Wrapping posts in full HTML + forcing white text…"
+echo "🔧 Wrapping posts into styled HTML (idempotent)…"
 python3 wrap_posts.py
+
+echo "📦 Adding schema markup…"
+python3 inject_schema.py || true
 
 echo "📰 Generating RSS feed…"
 python3 rss_generator.py
 
-echo "📰 Generating blog feed…"
+echo "📰 Generating blog feed grid…"
 python3 blog_feed_generator.py
 
-echo "🚀 Committing and pushing to GitHub Pages…"
-bash push_to_blog.sh
-
-echo "🔗 Fetching new affiliate products…"
-python3 fetch_reserved_affiliate_products.py
-
-# And (optionally) regenerate a root redirect to blog-feed.html:
+echo "🏷️ Creating/refreshing root redirect -> blog-feed.html"
 cat > index.html <<EOF
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Redirecting…</title>
-  <meta http-equiv="refresh" content="0;url=blog-feed.html">
-</head>
-<body>
-  <p>Redirecting to <a href="blog-feed.html">our blog feed</a>…</p>
-</body>
-</html>
+<!doctype html><meta charset="utf-8">
+<meta http-equiv="refresh" content="0;url=blog-feed.html">
+<p>Redirecting to <a href="blog-feed.html">blog feed</a>…</p>
 EOF
-git add index.html
-git commit -m "chore: add index.html redirect to blog-feed"
+
+echo "📦 Staging blog files for GitHub Pages…"
+git add blog-feed.html rss.xml index.html posts_wrapped/ || true
+
+echo "🚀 Committing and pushing to GitHub Pages…"
+git commit -m "Publish blog + RSS ($(date -u '+%Y-%m-%d %H:%M:%S UTC'))" || true
+git push origin main
+
+echo "🚀 Submitting blog URLs to Google Indexing API…"
+python3 index_to_google.py || true
+
+echo "✅ Done. View: https://reservedcannabis.github.io/reserved-blog/blog-feed.html"

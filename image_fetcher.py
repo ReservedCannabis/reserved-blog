@@ -1,31 +1,70 @@
-import os
-import requests
-import random
+#!/usr/bin/env python3
+import os, random
+from bs4 import BeautifulSoup
 
-PEXELS_API_KEY = "p8oZVpjpvQJAApFmltlSjdmqWRjIna6j0G62aVja5oKFJchMuusEu3e5"
-headers = { "Authorization": PEXELS_API_KEY }
+POSTS_DIR = "posts_wrapped"
 
-response = requests.get("https://api.pexels.com/v1/search?query=cannabis&per_page=50", headers=headers).json()
-photos = response.get("photos", [])
-if not photos:
-    print("❌ No images fetched from Pexels.")
-    exit()
+# ✅ VALID Unsplash image URLs (no downloads, no 404s)
+STOCK = [
+    "https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1600&q=80",
+    "https://images.unsplash.com/photo-1585238342028-4bbc2b5a4f8b?auto=format&fit=crop&w=1600&q=80",
+    "https://images.unsplash.com/photo-1615485925873-3f74e1e7a1b1?auto=format&fit=crop&w=1600&q=80",
+    "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1600&q=80",
+]
 
-image_urls = [p["src"]["large"] for p in photos]
-random.shuffle(image_urls)
+def pick_image():
+    return random.choice(STOCK)
 
-for idx, file in enumerate(sorted(os.listdir("posts"))):
-    if not file.endswith(".html"): continue
-    filepath = os.path.join("posts", file)
-    with open(filepath, "r") as f:
-        html = f.read()
+def main():
+    for name in os.listdir(POSTS_DIR):
+        if not name.endswith(".html"):
+            continue
 
-    img_tag = f'<img src="{image_urls[idx % len(image_urls)]}" style="max-width:100%;height:auto;border-radius:12px;margin-bottom:20px;" alt="Cannabis image">'
-    
-    if "<style>" not in html:
-        html = html.replace("<body>", """<body>
-<style>body{color:#fff;font-size:1.2em;line-height:1.6;}</style>""")
-    
-    with open(filepath, "w") as f:
-        f.write(img_tag + html)
-    print(f"✅ Added image to {file}")
+        path = os.path.join(POSTS_DIR, name)
+
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            soup = BeautifulSoup(f.read(), "html.parser")
+
+        img_url = pick_image()
+
+        # ---------- SEO: og:image ----------
+        if soup.head:
+            og = soup.head.find("meta", property="og:image")
+            if og:
+                og["content"] = img_url
+            else:
+                soup.head.append(
+                    soup.new_tag("meta", property="og:image", content=img_url)
+                )
+
+        # ---------- Visible HERO image ----------
+        article = soup.find("article") or soup.body
+        if not article:
+            continue
+
+        existing = article.find("img", {"data-hero": "true"})
+        if not existing:
+            img = soup.new_tag("img")
+            img["src"] = img_url
+            img["alt"] = ""
+            img["data-hero"] = "true"
+
+            # Inline styles so your theme CANNOT hide it
+            img["style"] = (
+                "width:100%;"
+                "max-height:420px;"
+                "object-fit:cover;"
+                "display:block;"
+                "margin:0 0 32px 0;"
+                "border-radius:12px;"
+            )
+
+            article.insert(0, img)
+
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(str(soup))
+
+        print(f"✅ Inserted hero image → {name}")
+
+if __name__ == "__main__":
+    main()
