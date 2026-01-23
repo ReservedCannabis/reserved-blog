@@ -4,6 +4,4 @@ __pycache__/
 .article_log.json
 cron_log.txt
 assets/
-posts/
-posts_wrapped/
 env/

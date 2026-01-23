@@ -4,7 +4,7 @@
 import os, datetime
 from bs4 import BeautifulSoup
 
-POSTS_DIR   = "posts_wrapped"
+POSTS_DIR   = "posts"
 OUTPUT_FILE = "rss.xml"
 BASE_URL    = "https://reservedcannabis.github.io/reserved-blog"  # adjust if repo path differs
 

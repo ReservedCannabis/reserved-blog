@@ -93,7 +93,7 @@ def main():
     posts = collect_posts()
     cards = []
     for ts, fp, title, img in posts:
-        href = f"posts_wrapped/{fp.name}"
+        href = f"posts/{fp.name}"
         cards.append(CARD.format(href=href, img=img, title=title, date=utcts(ts)))
     OUT_HTML.write_text(SHELL.format(cards="\n".join(cards)), encoding="utf-8")
     print(f"✅ Blog feed generated: {OUT_HTML} with {len(posts)} post(s)")
