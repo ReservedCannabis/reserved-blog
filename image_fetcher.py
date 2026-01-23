@@ -1,70 +1,61 @@
 #!/usr/bin/env python3
-import os, random
-from bs4 import BeautifulSoup
+from pathlib import Path
+import requests, uuid, random, time
 
-POSTS_DIR = "posts_wrapped"
+POST_DIR = Path("posts")
+IMG_DIR = Path("assets/images")
+IMG_DIR.mkdir(parents=True, exist_ok=True)
 
-# ✅ VALID Unsplash image URLs (no downloads, no 404s)
-STOCK = [
-    "https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1585238342028-4bbc2b5a4f8b?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1615485925873-3f74e1e7a1b1?auto=format&fit=crop&w=1600&q=80",
-    "https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1600&q=80",
+KEYWORDS = [
+    "cannabis flower",
+    "cannabis buds",
+    "cannabis accessories",
+    "dispensary interior",
+    "cannabis lifestyle"
 ]
 
-def pick_image():
-    return random.choice(STOCK)
+FALLBACK_IMAGE = "https://images.unsplash.com/photo-1603909223429-69bb7101f420?w=1600&auto=format&fit=crop"
+
+def fetch_image():
+    query = random.choice(KEYWORDS).replace(" ", ",")
+    url = f"https://source.unsplash.com/1600x900/?{query}"
+
+    for attempt in range(3):
+        try:
+            r = requests.get(url, timeout=15)
+            if r.status_code == 200:
+                return r.content
+        except Exception:
+            pass
+
+        print(f"⚠️ Unsplash retry {attempt + 1}/3")
+        time.sleep(2)
+
+    # Fallback (guaranteed)
+    print("⚠️ Using fallback image")
+    r = requests.get(FALLBACK_IMAGE, timeout=15)
+    r.raise_for_status()
+    return r.content
 
 def main():
-    for name in os.listdir(POSTS_DIR):
-        if not name.endswith(".html"):
-            continue
+    for post in POST_DIR.glob("*.html"):
+        html = post.read_text(encoding="utf-8")
 
-        path = os.path.join(POSTS_DIR, name)
+        if "<img" in html:
+            continue  # already has image
 
-        with open(path, "r", encoding="utf-8", errors="ignore") as f:
-            soup = BeautifulSoup(f.read(), "html.parser")
+        img_bytes = fetch_image()
+        img_name = f"{uuid.uuid4().hex}.jpg"
+        img_path = IMG_DIR / img_name
+        img_path.write_bytes(img_bytes)
 
-        img_url = pick_image()
+        hero = (
+            f'<img src="/assets/images/{img_name}" '
+            f'alt="Cannabis education article" class="hero">\n'
+        )
 
-        # ---------- SEO: og:image ----------
-        if soup.head:
-            og = soup.head.find("meta", property="og:image")
-            if og:
-                og["content"] = img_url
-            else:
-                soup.head.append(
-                    soup.new_tag("meta", property="og:image", content=img_url)
-                )
-
-        # ---------- Visible HERO image ----------
-        article = soup.find("article") or soup.body
-        if not article:
-            continue
-
-        existing = article.find("img", {"data-hero": "true"})
-        if not existing:
-            img = soup.new_tag("img")
-            img["src"] = img_url
-            img["alt"] = ""
-            img["data-hero"] = "true"
-
-            # Inline styles so your theme CANNOT hide it
-            img["style"] = (
-                "width:100%;"
-                "max-height:420px;"
-                "object-fit:cover;"
-                "display:block;"
-                "margin:0 0 32px 0;"
-                "border-radius:12px;"
-            )
-
-            article.insert(0, img)
-
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(str(soup))
-
-        print(f"✅ Inserted hero image → {name}")
+        post.write_text(hero + html, encoding="utf-8")
+        print(f"✅ Added hero image → {post.name}")
 
 if __name__ == "__main__":
     main()
